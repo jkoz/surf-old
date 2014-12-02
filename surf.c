@@ -955,6 +955,9 @@ newwindow(Client *c, const Arg *arg, gboolean noembed) {
 
 gchar *
 parseuri(const gchar *uri) {
+	if (LENGTH(searchengines) > 0 && *uri == ' ')
+		return g_strdup_printf(searchengines[0].uri, uri+1);
+
 	guint i;
 	for (i = 0; i < LENGTH(searchengines); i++) {
 		if (searchengines[i].token == NULL || searchengines[i].uri == NULL || *(uri + strlen(searchengines[i].token)) != ' ')
