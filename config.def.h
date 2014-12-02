@@ -31,6 +31,11 @@ static Bool loadimages = TRUE;
 static Bool hidebackground  = FALSE;
 static Bool allowgeolocation = TRUE;
 
+static SearchEngine searchengines[] = {
+	{ "g",   "http://www.google.ca/search?q=%s"   },
+	{ "d", "http://dict.leo.org/ende?search=%s" }
+};
+
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
 		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu`\" &&" \
