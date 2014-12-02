@@ -265,6 +265,7 @@ cleanup(void) {
 	g_free(cookiefile);
 	g_free(scriptfile);
 	g_free(stylefile);
+	g_free(historyfile);
 }
 
 static void
@@ -681,6 +682,10 @@ loaduri(Client *c, const Arg *arg) {
 		reload(c, &a);
 	} else {
 		webkit_web_view_load_uri(c->view, u);
+		FILE *f;
+		f = fopen(historyfile, "a+");
+		fprintf(f, u);
+		fclose(f);
 		c->progress = 0;
 		c->title = copystr(&c->title, u);
 		updatetitle(c);
@@ -1115,6 +1120,7 @@ setup(void) {
 	cookiefile = buildpath(cookiefile);
 	scriptfile = buildpath(scriptfile);
 	stylefile = buildpath(stylefile);
+	historyfile = buildpath(historyfile);
 
 	/* request handler */
 	s = webkit_get_default_session();

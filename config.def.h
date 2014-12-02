@@ -4,6 +4,7 @@ static char *useragent      = "Mozilla/5.0 (X11; U; Unix; en-US) "
 	"Safari/537.15 Surf/"VERSION;
 static char *stylefile      = "~/.surf/style.css";
 static char *scriptfile     = "~/.surf/script.js";
+static char *historyfile    = "~/.surf/history";
 
 static Bool kioskmode       = FALSE; /* Ignore shortcuts */
 static Bool showindicators  = TRUE;  /* Show indicators in window title */
@@ -33,7 +34,7 @@ static Bool allowgeolocation = TRUE;
 
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
-		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu`\" &&" \
+		"prop=\"`(xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b && cat ~/.surf/history) | dmenu`\" &&" \
 		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
 		p, q, winid, NULL \
 	} \
