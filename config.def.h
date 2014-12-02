@@ -32,7 +32,7 @@ static Bool hidebackground  = FALSE;
 static Bool allowgeolocation = TRUE;
 
 static SearchEngine searchengines[] = {
-	{ "g",   "http://www.google.ca/search?q=%s"   }, /* default search engine */
+	{ " ",   "http://www.google.ca/search?q=%s"   }, /* default search engine */
 	{ "d", "http://dict.leo.org/ende?search=%s" }
 };
 
