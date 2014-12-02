@@ -962,6 +962,9 @@ parseuri(const gchar *uri) {
 		if (g_str_has_prefix(uri, searchengines[i].token))
 			return g_strdup_printf(searchengines[i].uri, uri + strlen(searchengines[i].token) + 1);
 	}
+	if (LENGTH(searchengines) > 0 && g_strrstr(uri, " ") != NULL) // found a space, search with default search engine searchengines[0]
+		return g_strdup_printf(searchengines[0].uri, uri);
+
 	return g_strrstr(uri, "://") ? g_strdup(uri) : g_strdup_printf("http://%s", uri);
 }
 
