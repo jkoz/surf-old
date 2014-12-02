@@ -685,6 +685,7 @@ loaduri(Client *c, const Arg *arg) {
 		FILE *f;
 		f = fopen(historyfile, "a+");
 		fprintf(f, u);
+		fprintf(f, "\n");
 		fclose(f);
 		c->progress = 0;
 		c->title = copystr(&c->title, u);

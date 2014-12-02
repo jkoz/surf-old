@@ -34,7 +34,7 @@ static Bool allowgeolocation = TRUE;
 
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
-		"prop=\"`(xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b && cat ~/.surf/history) | dmenu`\" &&" \
+		"prop=\"`(xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b && tac ~/.surf/history ) | awk '{ if (a[$1]++ == 0) print $0; }' | dmenu -l 5 -i`\" &&" \
 		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
 		p, q, winid, NULL \
 	} \
