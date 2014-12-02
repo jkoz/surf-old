@@ -34,6 +34,14 @@ static Bool allowgeolocation = TRUE;
 
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
+		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu -l 5 -i`\" &&" \
+		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
+		p, q, winid, NULL \
+	} \
+}
+
+#define SETPROPCACHE(p, q) { \
+	.v = (char *[]){ "/bin/sh", "-c", \
 		"prop=\"`(xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b && tac ~/.surf/history ) | awk '{ if (a[$1]++ == 0) print $0; }' | dmenu -l 5 -i`\" &&" \
 		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
 		p, q, winid, NULL \
@@ -87,7 +95,7 @@ static Key keys[] = {
     { MODKEY,               GDK_o,      source,     { 0 } },
     { MODKEY|GDK_SHIFT_MASK,GDK_o,      inspector,  { 0 } },
 
-    { MODKEY,               GDK_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO") },
+    { MODKEY,               GDK_g,      spawn,      SETPROPCACHE("_SURF_URI", "_SURF_GO") },
     { MODKEY,               GDK_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
     { MODKEY,               GDK_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
 
