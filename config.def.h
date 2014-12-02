@@ -40,9 +40,9 @@ static Bool allowgeolocation = TRUE;
 	} \
 }
 
-#define SETPROPCACHE(p, q) { \
+#define HISTORY(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
-		"prop=\"`(xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b && tac ~/.surf/history ) | awk '{ if (a[$1]++ == 0) print $0; }' | dmenu -l 5 -i`\" &&" \
+		"prop=\"`tac ~/.surf/history | awk '{ if (a[$1]++ == 0) print $0; }' | dmenu -l 5 -i`\" &&" \
 		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
 		p, q, winid, NULL \
 	} \
@@ -80,23 +80,24 @@ static Key keys[] = {
     { MODKEY,               GDK_minus,  zoom,       { .i = -1 } },
     { MODKEY,               GDK_plus,   zoom,       { .i = +1 } },
 
-    { MODKEY,               GDK_l,      navigate,   { .i = +1 } },
-    { MODKEY,               GDK_h,      navigate,   { .i = -1 } },
+    { MODKEY,               GDK_i,      navigate,   { .i = +1 } },
+    { MODKEY,               GDK_o,      navigate,   { .i = -1 } },
 
     { MODKEY,               GDK_j,      scroll_v,   { .i = +1 } },
     { MODKEY,               GDK_k,      scroll_v,   { .i = -1 } },
-    { MODKEY,               GDK_b,      scroll_v,   { .i = -10000 } },
+    { MODKEY,               GDK_u,      scroll_v,   { .i = -10000 } },
+    { MODKEY,               GDK_d,      scroll_v,   { .i = +10000 } },
     { MODKEY,               GDK_space,  scroll_v,   { .i = +10000 } },
-    { MODKEY,               GDK_i,      scroll_h,   { .i = +1 } },
-    { MODKEY,               GDK_u,      scroll_h,   { .i = -1 } },
+    { MODKEY,               GDK_l,      scroll_h,   { .i = +1 } },
+    { MODKEY,               GDK_h,      scroll_h,   { .i = -1 } },
 
     { 0,                    GDK_F11,    fullscreen, { 0 } },
     { 0,                    GDK_Escape, stop,       { 0 } },
-    { MODKEY,               GDK_o,      source,     { 0 } },
-    { MODKEY|GDK_SHIFT_MASK,GDK_o,      inspector,  { 0 } },
+    { MODKEY,               GDK_b,      source,     { 0 } },
+    { MODKEY|GDK_SHIFT_MASK,GDK_b,      inspector,  { 0 } },
 
-    { MODKEY,               GDK_g,      spawn,      SETPROPCACHE("_SURF_URI", "_SURF_GO") },
-    { MODKEY,               GDK_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
+    { MODKEY,               GDK_m,      spawn,      HISTORY("_SURF_URI", "_SURF_GO") },
+    { MODKEY,               GDK_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO") },
     { MODKEY,               GDK_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
 
     { MODKEY,               GDK_n,      find,       { .b = TRUE } },
