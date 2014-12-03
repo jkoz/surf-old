@@ -4,9 +4,10 @@ static char *useragent      = "Mozilla/5.0 (X11; U; Unix; en-US) "
 	"Safari/537.15 Surf/"VERSION;
 static char *stylefile      = "~/.surf/style.css";
 static char *scriptfile     = "~/.surf/script.js";
+static char *historyfile    = "~/.surf/history";
 
 static Bool kioskmode       = FALSE; /* Ignore shortcuts */
-static Bool showindicators  = TRUE;  /* Show indicators in window title */
+static Bool showindicators  = FALSE;  /* Show indicators in window title */
 static Bool zoomto96dpi     = TRUE;  /* Zoom pages to always emulate 96dpi */
 static Bool runinfullscreen = FALSE; /* Run in fullscreen mode by default */
 
@@ -31,9 +32,22 @@ static Bool loadimages = TRUE;
 static Bool hidebackground  = FALSE;
 static Bool allowgeolocation = TRUE;
 
+static SearchEngine searchengines[] = {
+	{ " ",   "http://www.google.ca/search?q=%s"   }, /* default search engine */
+	{ "d", "http://dict.leo.org/ende?search=%s" }
+};
+
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
-		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu`\" &&" \
+		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu -l 5 -i`\" &&" \
+		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
+		p, q, winid, NULL \
+	} \
+}
+
+#define HISTORY(p, q) { \
+	.v = (char *[]){ "/bin/sh", "-c", \
+		"prop=\"`tac ~/.surf/history | awk '{ if (a[$1]++ == 0) print $0; }' | dmenu -l 5 -i`\" &&" \
 		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
 		p, q, winid, NULL \
 	} \
@@ -71,23 +85,24 @@ static Key keys[] = {
     { MODKEY,               GDK_minus,  zoom,       { .i = -1 } },
     { MODKEY,               GDK_plus,   zoom,       { .i = +1 } },
 
-    { MODKEY,               GDK_l,      navigate,   { .i = +1 } },
-    { MODKEY,               GDK_h,      navigate,   { .i = -1 } },
+    { MODKEY,               GDK_i,      navigate,   { .i = +1 } },
+    { MODKEY,               GDK_o,      navigate,   { .i = -1 } },
 
     { MODKEY,               GDK_j,      scroll_v,   { .i = +1 } },
     { MODKEY,               GDK_k,      scroll_v,   { .i = -1 } },
-    { MODKEY,               GDK_b,      scroll_v,   { .i = -10000 } },
+    { MODKEY,               GDK_u,      scroll_v,   { .i = -10000 } },
+    { MODKEY,               GDK_d,      scroll_v,   { .i = +10000 } },
     { MODKEY,               GDK_space,  scroll_v,   { .i = +10000 } },
-    { MODKEY,               GDK_i,      scroll_h,   { .i = +1 } },
-    { MODKEY,               GDK_u,      scroll_h,   { .i = -1 } },
+    { MODKEY,               GDK_l,      scroll_h,   { .i = +1 } },
+    { MODKEY,               GDK_h,      scroll_h,   { .i = -1 } },
 
     { 0,                    GDK_F11,    fullscreen, { 0 } },
     { 0,                    GDK_Escape, stop,       { 0 } },
-    { MODKEY,               GDK_o,      source,     { 0 } },
-    { MODKEY|GDK_SHIFT_MASK,GDK_o,      inspector,  { 0 } },
+    { MODKEY,               GDK_b,      source,     { 0 } },
+    { MODKEY|GDK_SHIFT_MASK,GDK_b,      inspector,  { 0 } },
 
+    { MODKEY,               GDK_m,      spawn,      HISTORY("_SURF_URI", "_SURF_GO") },
     { MODKEY,               GDK_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO") },
-    { MODKEY,               GDK_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
     { MODKEY,               GDK_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
 
     { MODKEY,               GDK_n,      find,       { .b = TRUE } },
