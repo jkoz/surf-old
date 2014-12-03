@@ -37,6 +37,8 @@ static SearchEngine searchengines[] = {
 	{ "d", "http://dict.leo.org/ende?search=%s" }
 };
 
+#define HOMEPAGE "https://www.google.com/"
+
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
 		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu -l 5 -i`\" &&" \
